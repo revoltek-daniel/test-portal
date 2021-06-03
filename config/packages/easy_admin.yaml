@@ -1,0 +1,7 @@
+easy_admin:
+  entities:
+    Question:
+      class: App\Entity\Question
+      form:
+        fields:
+          - { property: 'imageFile', type: 'vich_image' }
