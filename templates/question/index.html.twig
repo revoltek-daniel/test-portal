@@ -4,6 +4,27 @@
 
 {% block body %}
 <div class="content-wrapper">
+    <h1>{{ step.title }}</h1>
 
+    {% if step.description %}
+        {{ step.description | striptags('<div>,<strong>,<del>,<em>,<a>') | raw }}
+    {% endif %}
+
+    {% for question in step.questions %}
+        <div>
+            <h4>{{ question.title }}</h4>
+            {% if question.description %}
+                {{ question.description | striptags('<div>,<strong>,<del>,<em>,<a>') | raw }}
+            {% endif %}
+
+            {% if question.imageName %}
+                <img src="/images/questions/{{ question.imageName }}" alt=""/>
+            {% endif %}
+
+            {% for answer in question.answers %}
+                {{ answer.title }}
+            {% endfor %}
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}

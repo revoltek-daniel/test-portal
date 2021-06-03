@@ -39,6 +39,11 @@ class Step
      */
     private Collection $questions;
 
+    /**
+     * @ORM\Column(type="integer", )
+     */
+    private int $sorting = 0;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
@@ -111,6 +116,18 @@ class Step
                 $question->setStep(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSorting(): int
+    {
+        return $this->sorting;
+    }
+
+    public function setSorting(int $sorting): self
+    {
+        $this->sorting = $sorting;
 
         return $this;
     }

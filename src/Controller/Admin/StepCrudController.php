@@ -21,6 +21,7 @@ class StepCrudController extends AbstractCrudController
         return [
             TextField::new('title'),
             TextEditorField::new('description'),
+            NumberField::new('sorting'),
             NumberField::new('time')->setLabel('Zeit in Minuten'),
             AssociationField::new('questions')->setFormTypeOptionIfNotSet('by_reference', false),
         ];

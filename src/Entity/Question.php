@@ -57,14 +57,14 @@ class Question
     private ?Step $step;
 
     /**
-     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="question", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="question", cascade={"persist", "remove"})
      */
     private Collection $answers;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     public function __construct()
     {
