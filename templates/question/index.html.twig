@@ -3,7 +3,7 @@
 {% block title %}Hello QuestionController!{% endblock %}
 
 {% block body %}
-<div class="content-wrapper">
+<div class="content-wrapper" data-controller="startbutton" data-duration="{{ step.time }}">
     <h1>{{ step.title }}</h1>
 
     {% if step.description %}
@@ -11,9 +11,11 @@
     {% endif %}
     <p>Sie haben {{ step.time }} Minuten Zeit die folgenden Aufgaben abzuschließen, die Zeit startet nach klick auf den Start Button.</p>
 
-    <button data-controller="startbutton" data-action="startbutton#startTest">Start</button>
+    <button data-startbutton-target="button" data-action="startbutton#startTest">Start</button>
 
     <div hidden id="questions">
+        <div data-startbutton-target="counter"></div>
+
         {{ form_start(form) }}
         {% for question in step.questions %}
             <div>
