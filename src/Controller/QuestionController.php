@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Step;
+use App\Entity\UserAnswer;
 use App\Repository\StepRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -27,11 +28,35 @@ class QuestionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            foreach ($data as $datum) {
-                
+            $items = [];
+            foreach ($step->getQuestions() as $question) {
+                $answers = [];
+                foreach ($question->getAnswers() as $answer) {
+                    $answers[$answer->getId()] = $answer;
+                }
+                $items[$question->getId()] = [
+                    'question' => $question,
+                    'amswers' => $answers,
+                ];
             }
 
+            $entityManager = $this->getDoctrine()->getManager();
 
+            foreach ($data as $id => $answerValue) {
+                if ($answerValue === null) {
+                    continue;
+                }
+
+                $answer = new UserAnswer();
+
+                $answer->setQuestion($items[$id]['question']);
+                $answer->setAnswer($answerValue);
+                $answer->setStep($step);
+                $answer->setUser($this->getUser());
+
+                $entityManager->persist($answer);
+            }
+            $entityManager->flush();
         }
 
         return $this->render(
@@ -56,7 +81,7 @@ class QuestionController extends AbstractController
         foreach ($step->getQuestions() as $question) {
             $items = [];
             foreach ($question->getAnswers() as $answer) {
-                $items[] = $answer->getTitle();
+                $items[$answer->getId()] = $answer->getTitle();
             }
 
             $items = \array_flip($items);
@@ -65,6 +90,7 @@ class QuestionController extends AbstractController
                 $question->getId(),
                 ChoiceType::class,
                 [
+                    'required' => false,
                     'label' => $question->getTitle(),
                     'choices' => $items,
                     'expanded' => true,

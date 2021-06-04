@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserAnswerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserAnswerRepository::class)
@@ -23,16 +24,22 @@ class UserAnswer
     private ?string $answer;
 
     /**
-     * @ORM\OneToOne(targetEntity=Step::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private ?Step $step;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Question::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Question::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private ?Question $question;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Step::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private ?Step $step;
 
 
     public function getId(): ?int
@@ -52,18 +59,6 @@ class UserAnswer
         return $this;
     }
 
-    public function getStep(): ?Step
-    {
-        return $this->step;
-    }
-
-    public function setStep(Step $step): self
-    {
-        $this->step = $step;
-
-        return $this;
-    }
-
     public function getQuestion(): ?Question
     {
         return $this->question;
@@ -72,6 +67,30 @@ class UserAnswer
     public function setQuestion(Question $question): self
     {
         $this->question = $question;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(UserInterface $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getStep(): ?Step
+    {
+        return $this->step;
+    }
+
+    public function setStep(?Step $step): self
+    {
+        $this->step = $step;
 
         return $this;
     }
