@@ -1,13 +1,13 @@
 import { Controller } from 'stimulus'
 
 export default class extends Controller {
-  static targets = ['counter', 'button']
+  static targets = ['counter', 'button', 'questions']
 
   connect () {
   }
 
   startTest () {
-    document.getElementById('questions').removeAttribute('hidden')
+    this.questionsTarget.removeAttribute('hidden')
 
     this.startCounter()
 
