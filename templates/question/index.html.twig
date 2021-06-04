@@ -9,22 +9,29 @@
     {% if step.description %}
         {{ step.description | striptags('<div>,<strong>,<del>,<em>,<a>') | raw }}
     {% endif %}
+    <p>Sie haben {{ step.time }} Minuten Zeit die folgenden Aufgaben abzuschließen, die Zeit startet nach klick auf den Start Button.</p>
 
-    {% for question in step.questions %}
-        <div>
-            <h4>{{ question.title }}</h4>
-            {% if question.description %}
-                {{ question.description | striptags('<div>,<strong>,<del>,<em>,<a>') | raw }}
-            {% endif %}
+    <button data-controller="startbutton" data-action="startbutton#startTest">Start</button>
 
-            {% if question.imageName %}
-                <img src="/images/questions/{{ question.imageName }}" alt=""/>
-            {% endif %}
+    <div hidden id="questions">
+        {{ form_start(form) }}
+        {% for question in step.questions %}
+            <div>
+                <h4>{{ question.title }}</h4>
+                {% if question.description %}
+                    {{ question.description | striptags('<div>,<strong>,<del>,<em>,<a>') | raw }}
+                {% endif %}
 
-            {% for answer in question.answers %}
-                {{ answer.title }}
-            {% endfor %}
-        </div>
-    {% endfor %}
+                {% if question.imageName %}
+                    <img src="/images/questions/{{ question.imageName }}" alt=""/>
+                {% endif %}
+
+
+                {{ form_widget( attribute(form, question.id) ) }}
+            </div>
+        {% endfor %}
+        {{ form_end(form) }}
+    </div>
+
 </div>
 {% endblock %}
