@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Question;
 use App\Entity\Step;
+use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -29,6 +30,9 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::section('Teilnehmer');
+        yield MenuItem::linkToCrud('User', 'fas fa-list', User::class);
+        yield MenuItem::section('Konfiguration');
         yield MenuItem::linkToCrud('Schritte', 'fas fa-list', Step::class);
         yield MenuItem::linkToCrud('Fragen', 'fas fa-list', Question::class);
     }

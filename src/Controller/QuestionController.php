@@ -26,8 +26,12 @@ class QuestionController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            \var_dump($data);
-            die();
+
+            foreach ($data as $datum) {
+                
+            }
+
+
         }
 
         return $this->render(
