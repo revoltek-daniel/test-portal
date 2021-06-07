@@ -42,7 +42,7 @@ export default class extends Controller {
       if (distance < 0) {
         clearInterval(x)
         // redirect
-        console.log('EXPIRED')
+        document.form.submit()
       }
     }, 1000)
   }

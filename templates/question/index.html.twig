@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello QuestionController!{% endblock %}
+{% block title %}Fragen{% endblock %}
 
 {% block body %}
 <div class="content-wrapper" data-controller="startbutton" data-duration="{{ step.time }}">
@@ -16,7 +16,7 @@
     <div hidden data-startbutton-target="questions">
         <div data-startbutton-target="counter"></div>
 
-        {{ form_start(form) }}
+        {{ form_start(form, {'id': 'question-form'}) }}
         {% for question in step.questions %}
             <div>
                 <h4>{{ question.title }}</h4>

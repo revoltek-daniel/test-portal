@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -34,6 +35,8 @@ class UserCrudController extends AbstractCrudController
         return [
             TextField::new('username'),
             TextField::new('plainPassword')->setFormType(PasswordType::class)->onlyOnForms(),
+            TextField::new('name'),
+            EmailField::new('email'),
         ];
     }
 

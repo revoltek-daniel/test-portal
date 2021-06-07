@@ -1,5 +1,6 @@
 body {
-    background-color: lightgray;
+    background-color: #075597;
+    color: white;
 }
 .content-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
 .btn {
