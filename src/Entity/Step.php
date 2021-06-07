@@ -30,9 +30,9 @@ class Step
     private ?string $description;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
-    private ?int $time;
+    private ?float $time;
 
     /**
      * @ORM\OneToMany(targetEntity=Question::class, mappedBy="step")
@@ -78,12 +78,12 @@ class Step
         return $this;
     }
 
-    public function getTime(): ?int
+    public function getTime(): ?float
     {
         return $this->time;
     }
 
-    public function setTime(int $time): self
+    public function setTime(float $time): self
     {
         $this->time = $time;
 

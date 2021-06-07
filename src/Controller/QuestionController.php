@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +25,7 @@ class QuestionController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $session = $requestStack->getSession();
-        $stepCount = $session->get('step', $user->getLastStep() ?? 1);
+        $stepCount = $user->getLastStep() ?? 1;
         $step = $stepRepository->findOneBy(['sorting' => $stepCount]);
 
         if (!$step  instanceof Step) {
@@ -70,17 +71,49 @@ class QuestionController extends AbstractController
             $user->setLastStep($nextStep);
             $entityManager->persist($user);
             $entityManager->flush();
-            $session->set('step', $nextStep);
+            $session->set('stepTime', 0);
             return $this->redirectToRoute('question_start');
         }
+
+        $durationInSeconds = $step->getTime() * 60;
+        $timeLeft = ($durationInSeconds - $session->get('stepTime', 0));
+
+        $minutes = floor($timeLeft / 60 % 60);
+        $seconds = $timeLeft - $minutes * 60;
+
+        $timeFormated = $minutes . ':' . \str_pad($seconds, 2, 0);
 
         return $this->render(
             'question/index.html.twig',
             [
                 'step' => $step,
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'timeLeft' => $timeFormated,
+                'timeLeftMinutes' => $timeLeft / 60,
             ]
         );
+    }
+
+    /**
+     * @Route("/questions/success", name="question_sucess")
+     */
+    public function success(): Response
+    {
+        return $this->render(
+            'question/success.html.twig'
+        );
+    }
+
+    /**
+     * @Route("/questions/ajaxUpdate", name="question_ajax_update")
+     */
+    public function ajaxUpdate(RequestStack $requestStack): JsonResponse
+    {
+        $session = $requestStack->getSession();
+        $timePassed = $session->get('stepTime', 0);
+        $timePassed += 5;
+        $session->set('stepTime', $timePassed);
+        return $this->json(['success' => true, 'timePassed' => $timePassed]);
     }
 
     /**
@@ -117,15 +150,5 @@ class QuestionController extends AbstractController
         $formBuilder->add('submit', SubmitType::class);
 
         return $formBuilder->getForm();
-    }
-
-    /**
-     * @Route("/questions/success", name="question_sucess")
-     */
-    public function success(): Response
-    {
-        return $this->render(
-            'question/success.html.twig'
-        );
     }
 }

@@ -3,13 +3,13 @@
 {% block title %}Fragen{% endblock %}
 
 {% block body %}
-<div class="content-wrapper" data-controller="startbutton" data-duration="{{ step.time }}">
+<div class="content-wrapper" data-controller="startbutton" data-duration="{{ timeLeftMinutes }}">
     <h1>{{ step.title }}</h1>
 
     {% if step.description %}
         {{ step.description | striptags('<div>,<strong>,<del>,<em>,<a>') | raw }}
     {% endif %}
-    <p>Sie haben {{ step.time }} Minuten Zeit die folgenden Aufgaben abzuschließen, die Zeit startet nach klick auf den Start Button.</p>
+    <p>Sie haben {{ timeLeft }} Minuten Zeit die folgenden Aufgaben abzuschließen, die Zeit startet nach klick auf den Start Button.</p>
 
     <button data-startbutton-target="button" data-action="startbutton#startTest">Start</button>
 
