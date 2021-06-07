@@ -61,8 +61,6 @@ class EmailVerifier
         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
         $tokenStorage->setToken($token);
 
-        // If the firewall name is not main, then the set value would be instead:
-        // $this->get('session')->set('_security_XXXFIREWALLNAMEXXX', serialize($token));
         $requestStack->getSession()->set('_security_main', serialize($token));
 
         // Fire the login event manually

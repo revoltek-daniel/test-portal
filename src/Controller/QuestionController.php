@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Step;
+use App\Entity\User;
 use App\Entity\UserAnswer;
 use App\Repository\StepRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,8 +21,10 @@ class QuestionController extends AbstractController
      */
     public function index(RequestStack $requestStack, StepRepository $stepRepository): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $session = $requestStack->getSession();
-        $stepCount = $session->get('step', 1);
+        $stepCount = $session->get('step', $user->getLastStep() ?? 1);
         $step = $stepRepository->findOneBy(['sorting' => $stepCount]);
 
         if (!$step  instanceof Step) {
@@ -62,8 +65,12 @@ class QuestionController extends AbstractController
 
                 $entityManager->persist($answer);
             }
+
+            $nextStep = $stepCount + 1;
+            $user->setLastStep($nextStep);
+            $entityManager->persist($user);
             $entityManager->flush();
-            $session->set('step', $stepCount + 1);
+            $session->set('step', $nextStep);
             return $this->redirectToRoute('question_start');
         }
 

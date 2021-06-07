@@ -58,6 +58,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $isVerified = false;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $lastStep;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -181,6 +186,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getLastStep(): ?int
+    {
+        return $this->lastStep;
+    }
+
+    public function setLastStep(?int $lastStep): self
+    {
+        $this->lastStep = $lastStep;
 
         return $this;
     }
