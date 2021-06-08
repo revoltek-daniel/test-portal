@@ -4,12 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Step;
 use App\Entity\User;
-use App\Entity\UserAnswer;
 use App\Repository\StepRepository;
+use App\Service\QuestionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +17,7 @@ class QuestionController extends AbstractController
     /**
      * @Route("/questions", name="question_start")
      */
-    public function index(RequestStack $requestStack, StepRepository $stepRepository): Response
+    public function index(RequestStack $requestStack, StepRepository $stepRepository, QuestionService $questionService): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -32,40 +29,17 @@ class QuestionController extends AbstractController
             return $this->redirectToRoute('question_sucess');
         }
 
-        $form = $this->createStepForm($step);
+        $dataObj = [];
+        $formBuilder = $this->createFormBuilder($dataObj);
+
+        $form = $questionService->createForm($step, $formBuilder);
 
         $form->handleRequest($requestStack->getCurrentRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-
-            $items = [];
-            foreach ($step->getQuestions() as $question) {
-                $answers = [];
-                foreach ($question->getAnswers() as $answer) {
-                    $answers[$answer->getId()] = $answer;
-                }
-                $items[$question->getId()] = [
-                    'question' => $question,
-                    'amswers' => $answers,
-                ];
-            }
-
             $entityManager = $this->getDoctrine()->getManager();
 
-            foreach ($data as $id => $answerValue) {
-                if ($answerValue === null) {
-                    continue;
-                }
-
-                $answer = new UserAnswer();
-
-                $answer->setQuestion($items[$id]['question']);
-                $answer->setAnswer($answerValue);
-                $answer->setStep($step);
-                $answer->setUser($this->getUser());
-
-                $entityManager->persist($answer);
-            }
+            $questionService->handleFormData($step, $data, $entityManager, $user);
 
             $nextStep = $stepCount + 1;
             $user->setLastStep($nextStep);
@@ -99,6 +73,9 @@ class QuestionController extends AbstractController
      */
     public function success(): Response
     {
+        $user = $this->getUser();
+
+
         return $this->render(
             'question/success.html.twig'
         );
@@ -116,39 +93,5 @@ class QuestionController extends AbstractController
         return $this->json(['success' => true, 'timePassed' => $timePassed]);
     }
 
-    /**
-     * @param Step $step
-     *
-     * @return FormInterface
-     */
-    protected function createStepForm(Step $step): FormInterface
-    {
-        $dataObj = [];
-        $formBuilder = $this->createFormBuilder($dataObj);
 
-        foreach ($step->getQuestions() as $question) {
-            $items = [];
-            foreach ($question->getAnswers() as $answer) {
-                $items[$answer->getId()] = $answer->getTitle();
-            }
-
-            $items = \array_flip($items);
-
-            $formBuilder->add(
-                $question->getId(),
-                ChoiceType::class,
-                [
-                    'required' => false,
-                    'label' => $question->getTitle(),
-                    'choices' => $items,
-                    'expanded' => true,
-                    'multiple' => false,
-                ]
-            );
-        }
-
-        $formBuilder->add('submit', SubmitType::class);
-
-        return $formBuilder->getForm();
-    }
 }

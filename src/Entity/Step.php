@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Step
 {
+    public const TYPE_QUESTION = 0;
+    public const TYPE_TEXT = 1;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -40,9 +43,15 @@ class Step
     private Collection $questions;
 
     /**
-     * @ORM\Column(type="integer", )
+     * @ORM\Column(type="integer")
      */
     private int $sorting = 0;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private int $type = self::TYPE_QUESTION;
 
     public function __construct()
     {
@@ -129,6 +138,25 @@ class Step
     {
         $this->sorting = $sorting;
 
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int $type
+     *
+     * @return Step
+     */
+    public function setType(int $type): Step
+    {
+        $this->type = $type;
         return $this;
     }
 }

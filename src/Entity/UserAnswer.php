@@ -25,7 +25,7 @@ class UserAnswer
 
     /**
      * @ORM\ManyToOne(targetEntity=Question::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private ?Question $question;
 
@@ -33,7 +33,7 @@ class UserAnswer
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private ?User $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Step::class)
