@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Step;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -34,5 +36,15 @@ class StepCrudController extends AbstractCrudController
             NumberField::new('time')->setLabel('Zeit in Minuten'),
             AssociationField::new('questions')->setFormTypeOptionIfNotSet('by_reference', false),
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $actions = parent::configureActions($actions);
+
+        $actions->remove(Crud::PAGE_INDEX, 'delete');
+        $actions->remove(Crud::PAGE_DETAIL, 'delete');
+
+        return $actions;
     }
 }

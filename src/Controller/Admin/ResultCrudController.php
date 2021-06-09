@@ -30,7 +30,12 @@ class ResultCrudController extends AbstractCrudController
         $actions->remove(Crud::PAGE_INDEX, 'edit');
         $actions->remove(Crud::PAGE_INDEX, 'new');
 
-        $detailAction = Action::new('detail')->linkToRoute('admin_results', function (Result $entity) { return ['id' => $entity->getId()];});
+        $detailAction = Action::new('detail')->linkToRoute(
+            'admin_results',
+            function (Result $entity) {
+                return ['id' => $entity->getId()];
+            }
+        );
         $actions->add(Crud::PAGE_INDEX, $detailAction);
 
         return $actions;
