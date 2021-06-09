@@ -30,7 +30,7 @@ class UserAnswer
     private ?Question $question;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="answers")
      * @ORM\JoinColumn(nullable=false)
      */
     private ?User $user;

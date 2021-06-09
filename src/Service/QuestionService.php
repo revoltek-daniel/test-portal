@@ -2,6 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Question;
+use App\Entity\Result;
+use App\Entity\ResultStep;
 use App\Entity\Step;
 use App\Entity\UserAnswer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,7 +51,7 @@ class QuestionService
             case Step::TYPE_TEXT:
                 $answer = new UserAnswer();
 
-               // $answer->setQuestion();
+                // $answer->setQuestion();
                 $answer->setAnswer((string)$data['text']);
                 $answer->setStep($step);
                 $answer->setUser($user);
@@ -59,7 +62,7 @@ class QuestionService
     }
 
     /**
-     * @param Step                 $step
+     * @param Step $step
      * @param FormBuilderInterface $formBuilder
      *
      * @return FormInterface
@@ -104,5 +107,49 @@ class QuestionService
         $formBuilder->add('submit', SubmitType::class);
 
         return $formBuilder->getForm();
+    }
+
+    public function evaluateFormResults(\App\Entity\User $user)
+    {
+        $answers = $user->getAnswers();
+
+        $processed = [];
+        $correct = [];
+        $steps = [];
+        foreach ($answers as $answer) {
+            $question = $answer->getQuestion();
+            if ($question instanceof Question) {
+                $stepId = $answer->getStep()->getId();
+                $correctAnswers =
+                    \array_filter(
+                        $question->getAnswers()->toArray(),
+                        static function ($answer) {
+                            return $answer->isCorrect();
+                        }
+                    );
+                $correctAnswer = reset($correctAnswers);
+                if ((int)$answer->getAnswer() === $correctAnswer->getId()) {
+                    $correct[$stepId] = ($correct[$stepId] ?? 0) + 1;
+                }
+                $processed[$stepId] = ($processed[$stepId] ?? 0) + 1;
+                $steps[$stepId] = $answer->getStep();
+            }
+        }
+        
+        $result = new Result();
+        $result->setUser($user);
+
+        /** @var Step $step */
+        foreach ($steps as $step) {
+            $resultStep = new ResultStep();
+            $resultStep->setStep($step);
+            $resultStep->setTotal($step->getQuestions()->count());
+            $resultStep->setProcessed($processed[$step->getId()] ?? 0);
+            $resultStep->setCorrect($correct[$step->getId()] ?? 0);
+
+            $result->addStepResult($resultStep);
+        }
+
+        return $result;
     }
 }

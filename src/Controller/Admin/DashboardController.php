@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Question;
+use App\Entity\Result;
 use App\Entity\Step;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -31,7 +32,9 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::section('Teilnehmer');
-        yield MenuItem::linkToCrud('User', 'fas fa-list', User::class);
+        yield MenuItem::linkToCrud('User', 'fas fa-user', User::class);
+     //   yield MenuItem::linktoRoute('Auswertung', 'fas fa-chart-bar', 'admin_results');
+        yield MenuItem::linkToCrud('Auswertung', 'fas fa-chart-bar', Result::class);
         yield MenuItem::section('Konfiguration');
         yield MenuItem::linkToCrud('Schritte', 'fas fa-list', Step::class);
         yield MenuItem::linkToCrud('Fragen', 'fas fa-list', Question::class);

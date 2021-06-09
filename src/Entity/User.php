@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -46,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private ?string $name;
+    private ?string $name = '';
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -56,12 +58,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isVerified = false;
+    private bool $isVerified = false;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private ?int $lastStep;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserAnswer::class, mappedBy="user")
+     */
+    private Collection $answers;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Result::class, mappedBy="user", orphanRemoval=true)
+     */
+    private Collection $results;
+
+    public function __construct()
+    {
+        $this->answers = new ArrayCollection();
+        $this->results = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -200,5 +218,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastStep = $lastStep;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|UserAnswer[]
+     */
+    public function getAnswers(): Collection
+    {
+        return $this->answers;
+    }
+
+    public function addAnswer(UserAnswer $answer): self
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers[] = $answer;
+            $answer->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnswer(UserAnswer $answer): self
+    {
+        if ($this->answers->removeElement($answer)) {
+            // set the owning side to null (unless already changed)
+            if ($answer->getStep() === $this) {
+                $answer->setStep(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Result[]
+     */
+    public function getResults(): Collection
+    {
+        return $this->results;
+    }
+
+    public function addResult(Result $result): self
+    {
+        if (!$this->results->contains($result)) {
+            $this->results[] = $result;
+            $result->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResult(Result $result): self
+    {
+        if ($this->results->removeElement($result)) {
+            // set the owning side to null (unless already changed)
+            if ($result->getUser() === $this) {
+                $result->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

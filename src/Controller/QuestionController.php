@@ -71,10 +71,18 @@ class QuestionController extends AbstractController
     /**
      * @Route("/questions/success", name="question_sucess")
      */
-    public function success(): Response
+    public function success(QuestionService $questionService): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
 
+        if ($user->getResults()->isEmpty()) {
+            $result = $questionService->evaluateFormResults($user);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($result);
+            $entityManager->flush();
+        }
 
         return $this->render(
             'question/success.html.twig'
@@ -92,6 +100,4 @@ class QuestionController extends AbstractController
         $session->set('stepTime', $timePassed);
         return $this->json(['success' => true, 'timePassed' => $timePassed]);
     }
-
-
 }

@@ -1,0 +1,24 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Auswertung{% endblock %}
+
+{% block page_content %}
+<table class="table datagrid with-rounded-top">
+    <thead>
+        <tr>
+            <th class="text-" dir="ltr">Name</th>
+            <th class="text-" dir="ltr"><span class="sr-only">Actions</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+            <tr>
+                <td class="text- field-text">
+                   {{ result.user.name }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
