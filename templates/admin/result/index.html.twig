@@ -6,15 +6,27 @@
 <table class="table datagrid with-rounded-top">
     <thead>
         <tr>
-            <th class="text-" dir="ltr">Name</th>
+            <th class="text-" dir="ltr">Schritt</th>
+            <th class="text-" dir="ltr">Fragen gesamt</th>
+            <th class="text-" dir="ltr">Fragen beantwortet</th>
+            <th class="text-" dir="ltr">Fragen korrekt</th>
             <th class="text-" dir="ltr"><span class="sr-only">Actions</span></th>
         </tr>
     </thead>
     <tbody>
-        {% for result in results %}
+        {% for resultStep in result.stepResults %}
             <tr>
                 <td class="text- field-text">
-                   {{ result.user.name }}
+                   {{ resultStep.step.title }}
+                </td>
+                <td class="text- field-text">
+                   {{ resultStep.total }}
+                </td>
+                <td class="text- field-text">
+                   {{ resultStep.processed }}
+                </td>
+                <td class="text- field-text">
+                   {{ resultStep.correct }}
                 </td>
             </tr>
         {% endfor %}

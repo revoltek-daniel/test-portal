@@ -52,7 +52,7 @@ class QuestionController extends AbstractController
         $durationInSeconds = $step->getTime() * 60;
         $timeLeft = ($durationInSeconds - $session->get('stepTime', 0));
 
-        $minutes = floor($timeLeft / 60 % 60);
+        $minutes = \floor($timeLeft / 60 % 60);
         $seconds = $timeLeft - $minutes * 60;
 
         $timeFormated = $minutes . ':' . \str_pad($seconds, 2, 0);
