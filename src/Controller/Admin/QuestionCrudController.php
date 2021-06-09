@@ -32,5 +32,4 @@ class QuestionCrudController extends AbstractCrudController
                 ->setEntryIsComplex(true),
         ];
     }
-
 }
